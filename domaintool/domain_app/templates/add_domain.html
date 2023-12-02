@@ -1,0 +1,90 @@
+{% extends 'base_dash.html' %}
+{% load static %}
+
+{% block content %}
+<div class="col-lg-10 mx-5">
+<div class="jumbotron">
+    <h3 class="display-6">Add Domain</h3>
+    <hr class="my-4">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <form id="domainForm" action="" method="post" autocomplete="off">
+        {% csrf_token %}
+        {% load crispy_forms_tags %}
+        <div class="row">
+            <div class="col-md-8">
+                {{ form.name|as_crispy_field }}
+            </div>
+            <div class="col-md-4">
+                {{ form.company|as_crispy_field }}
+            </div>
+            <div class="col-md-4">
+                {{ form.registration_date|as_crispy_field }}
+            </div>
+            <div class="col-md-4">
+                {{ form.expiry_date|as_crispy_field }}
+            </div>
+            <div class="col-md-4" style="margin-top: 32px;">
+                <button type="button" class="btn btn-primary btn-block" id="lookupButton">
+                    <i class="fas fa-search"></i> Lookup
+                </button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8">
+                <button type="submit" class="btn btn-success btn-block btn-lg"><i class="fa fa-database"
+                        aria-hidden="true"></i> Submit</button>
+            </div>
+            <div class="col-md-4">
+                <a href="{% url 'domain' %}" class="btn btn-secondary btn-block btn-lg">
+                    <i class="fas fa-arrow-left"></i> Back to Domain List
+                </a>
+            </div>
+        </div>
+    </form>
+</div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        // Attach a click event listener to the Lookup button
+        $('#lookupButton').click(function () {
+            // Make an AJAX request to the Django view
+            $.ajax({
+                url: '{% url "lookup" %}',
+                method: 'POST',
+                data: $('#domainForm').serialize(),
+                success: function (data) {
+                    console.log('API Response:', data);
+    
+                    // Check if the API request was successful
+                    if (data.error) {
+                        console.error('Error:', data.error);
+                    } else {
+                        // Attempt to access the date properties directly
+                        const registrationDate = data.registration_date;
+                        const expirationDate = data.expiry_date;
+    
+                        // Log the date properties
+                        console.log('Registration Date:', registrationDate);
+                        console.log('Expiration Date:', expirationDate);
+    
+                        // Check if the date properties are non-empty
+                        if (registrationDate !== '' && expirationDate !== '') {
+                            // Update the form fields with the API response
+                            $('#id_registration_date').val(registrationDate);
+                            $('#id_expiry_date').val(expirationDate);
+                        } else {
+                            console.error('Error: Date properties are empty in the API response.');
+                        }
+                    }
+                },
+                error: function (error) {
+                    console.error('Error:', error.responseText);
+                }
+            });
+        });
+    });
+    
+    
+</script>
+{% endblock content %}

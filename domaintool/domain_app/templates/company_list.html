@@ -1,0 +1,48 @@
+{% extends 'base_dash.html' %}
+
+{%load static%}
+
+
+{% block content %}
+<div class="col-lg-10 mx-5">
+<div class="jumbotron">
+    <h3 class="display-6">Manage Companies</h3>
+     <hr class="my-4">
+        <table class="table table-borderless">
+            <thead class="border-bottom font-weight-bold">
+                <tr>
+                    <td> Company Name </td>
+                    <td> Company Address</td>
+                    <td> Company Location</td>
+                    <td> 
+                        <a href="{% url 'companies' %}" class="btn btn-outline-success">
+                        <i class= "fas fa-plus"></i>Add New
+                        </a>
+                    </td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for company in companies %}
+                <tr>
+                    <td> {{company.name}}</td>
+                    <td> {{company.address}}</td>
+                    <td> {{company.location}}</td>
+                    <td>
+                        <a href="{% url 'company_update' company.id %}" class="btn text-secondary px-0">
+                            <i class="far fa-edit fa-lg"></i>
+                        </a>
+                        <form action="{% url 'company_delete' company.id %}" method="post" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn" onclick="return confirm('Are you sure you want to delete company?')">
+                            <i class="far fa-trash-alt fa-lg text-danger float-right"></i>
+                        </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>    
+        </table>
+    </div>
+</div>
+</div>
+{% endblock content%}
