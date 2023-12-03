@@ -7,7 +7,8 @@ from .forms import CompanyForm, DomainForm
 from .models import Company, Domain
 from django.views import View
 import requests, json
-from datetime import datetime,date
+from datetime import datetime, date, timedelta
+
 # Create your views here.
 
 def index(request):
@@ -152,6 +153,7 @@ def lookup(request):
 
                 # Return the relevant data as JSON
                 return JsonResponse({
+                    'status': 'success',
                     'registration_date': registration_date,
                     'expiry_date': expiry_date,
                 })

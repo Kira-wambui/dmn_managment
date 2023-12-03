@@ -18,4 +18,5 @@ urlpatterns = [
     path("domain_status/", views.domain_status, name='domain_status'),
     path('api/domain-update/<str:domain_name>/', DomainUpdateView.as_view(), name='domain-api'),
     path("delete/<int:id>", views.domain_delete, name="domain_delete"),
+    
 ]

@@ -24,6 +24,9 @@
   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.6/css/jquery.dataTables.css">
   <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
   <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
 
 </head>
 <!--
@@ -192,7 +195,6 @@ to get the desired effect
       <div class="container-fluid">
         <div class="row">
           <!-- ... -->
-      
           <div class="col-6">
               <div class="info-box">
                 <span class="info-box-icon bg-info elevation-1"><i class="fas fa-check-circle"></i></span>
@@ -205,18 +207,7 @@ to get the desired effect
               </div>
               <!-- /.info-box -->
           </div>
-          {% comment %} <div class="info-box">
-            <span class="info-box-icon bg-info elevation-1"><i class="fas fa-cog"></i></span>
-
-            <div class="info-box-content">
-              <span class="info-box-text">CPU Traffic</span>
-              <span class="info-box-number">
-                10
-                <small>%</small>
-              </span>
-            </div>
-            <!-- /.info-box-content -->
-          </div> {% endcomment %}
+          
           <!-- /.col -->
           <!-- ... -->
           <div class="col-6">
@@ -234,11 +225,13 @@ to get the desired effect
           <!-- /.col -->
       </div>
         <div class="row">
-          
+          <div class="col-12">
             <!-- /.card -->
-            {% block content %}
-
-            {% endblock content%}
+            <div style="width: 80%; margin: auto;">
+              <canvas id="expiryChart"></canvas>
+          </div>
+          
+          
             <!-- /.card -->
         </div>
           

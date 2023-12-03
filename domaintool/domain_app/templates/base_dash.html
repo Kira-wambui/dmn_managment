@@ -20,11 +20,21 @@
   <link rel="stylesheet" href="{%static 'dist/css/adminlte.min.css' %}">
   <!-- Google Font: Source Sans Pro -->
   <link href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css" rel="stylesheet">
+  <!-- Alert CSS -->
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css"/>
+  <!-- Default theme -->
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css"/>
+  <!-- Semantic UI theme -->
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/semantic.min.css"/>
+  <!-- Bootstrap theme -->
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/bootstrap.min.css"/>
 
   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.6/css/jquery.dataTables.css">
   <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
   <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
-
+  <!-- Alertify -->
+  <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
+  
 </head>
 <!--
 BODY TAG OPTIONS:
@@ -37,7 +47,7 @@ to get the desired effect
 |---------------------------------------------------------|
 -->
 <body class="hold-transition sidebar-mini">
-  <!-- Loader -->
+   <!-- Loader -->
 <div class="wrapper">
   <!-- Navbar -->
   <nav class="main-header navbar navbar-expand navbar-white" style="background-color:#212529;">
@@ -245,6 +255,28 @@ to get the desired effect
 <script src="{%static 'plugins/chart.js/Chart.min.js' %}"></script>
 <script src="{%static 'dist/js/demo.js' %}"></script>
 <script src="{%static 'dist/js/pages/dashboard3.js' %}"></script>
+<script>
+  // Simulate content loading (you should replace this with your actual content loading logic).
+window.addEventListener('load', function () {
+  // Simulating content loading delay with setTimeout
+  setTimeout(function () {
+      hidePreloader();
+  }, 2000); // Adjust the timeout value as needed
+});
+
+function hidePreloader() {
+  var preloader = document.querySelector('.preloader-container');
+  var content = document.getElementById('content');
+
+  preloader.style.display = 'none';
+  content.style.display = 'block';
+
+  // Stop the spinner by removing the 'spin' animation class
+  var spinner = document.querySelector('.spinner');
+  spinner.classList.remove('spin');
+}
+
+</script>
 {% block js%}
 
 {% endblock %}
