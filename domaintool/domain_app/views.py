@@ -3,11 +3,12 @@ from django.shortcuts import render,redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from .forms import CompanyForm, DomainForm
+from .forms import CompanyForm, DomainForm, UserForm
 from .models import Company, Domain
 from django.views import View
 import requests, json
 from datetime import datetime, date, timedelta
+from .models import User
 
 # Create your views here.
 
@@ -21,6 +22,7 @@ def dashboard(request):
     context = {
         'active_domains': active_domains,
         'expired_domains': expired_domains,
+        'domains': Domain.objects.all(),
     }
 
     return render(request, 'dashboard.html', context)
@@ -63,6 +65,22 @@ def signout(request):
     logout(request)
     return redirect("index")
 
+def list_users(request):
+    users = User.objects.all()
+    return render(request, 'users_list.html', {'users': users})
+
+def add_user(request):
+    if request.method == 'POST':
+        form = UserForm(request.POST)
+        if form.is_valid():
+            form.save()
+            # Redirect to a success page or any other desired behavior
+            return redirect('success_page')
+    else:
+        form = UserForm()
+
+    return render(request, 'add_user.html', {'form': form})
+
 def company_list(request, id=0):
     if request.method == "GET":
         if id==0:
@@ -98,6 +116,10 @@ def domain(request):
 def domain_status(request):
     context = {'domains': Domain.objects.all()}
     return render(request, "domain_status.html", context)
+
+def dash_domain_status(request):
+    context = {'domain': Domain.objects.all()}
+    return render(request, 'dashboard.html', context)
 
 def domain_list(request):
     if request.method == "GET":

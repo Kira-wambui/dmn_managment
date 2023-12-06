@@ -33,6 +33,11 @@
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
     }
+
+    .ajs-success {
+        background-color: #4CAF50; 
+        color: #ffffff;
+    }
 </style>
 <div class="col-lg-10 mx-5">
 <div class="jumbotron">
@@ -133,27 +138,27 @@
                             $('#id_registration_date').val(registrationDate);
                             $('#id_expiry_date').val(expirationDate);
         
-                            hidePreloader();
                             // Use Alertify.js for success message
                             alertify.success('Domain Found!');
                         } else {
                             console.error('Error: Date properties are empty in the API response.');
-                            hidePreloader();
                             // Use Alertify.js for error message
                             alertify.error('Error: Date properties are empty.');
                         }
                     } else {
                         console.error('Error:', data.message);
-                        hidePreloader();
                         // Use Alertify.js for error message
                         alertify.error('Error: ' + data.message);
                     }
                 },
                 error: function (error) {
                     console.error('Error:', error.responseText);
-                    hidePreloader();
                     // Use Alertify.js for error message
                     alertify.error('Error: ' + error.responseText);
+                },
+                complete: function () {
+                    // This function will run regardless of success or error
+                    hidePreloader();
                 }
             });
         });

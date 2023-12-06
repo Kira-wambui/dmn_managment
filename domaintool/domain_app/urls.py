@@ -10,6 +10,7 @@ urlpatterns = [
     path("logout/", views.signout, name="signout"),
     path("delete/<int:id>", views.company_delete, name="company_delete"),
     path("manage_companies/add_company", views.company_list, name="companies"),
+    path("manage_users/", views.list_users, name="users"),
     path("manage_companies/edit_company/<int:id>/", views.company_list, name="company_update"),
     path("manage_companies/", views.companies, name="lists"),
     path("manage_domains/", views.domain, name="domain"),
@@ -18,5 +19,7 @@ urlpatterns = [
     path("domain_status/", views.domain_status, name='domain_status'),
     path('api/domain-update/<str:domain_name>/', DomainUpdateView.as_view(), name='domain-api'),
     path("delete/<int:id>", views.domain_delete, name="domain_delete"),
+    path('manage_users/add_user/', views.add_user, name='add_user')
+    
     
 ]

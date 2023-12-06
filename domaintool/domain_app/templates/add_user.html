@@ -1,0 +1,37 @@
+{% extends 'base_dash.html' %}
+
+{% block content %}
+<div class="col-lg-10 mx-5">
+    <div class="jumbotron">
+        <h3 class="display-6">Add New User</h3>
+        <hr class="my-4">
+        <form method="post">
+            {% csrf_token %}
+            <div>
+              {{ form.username.label_tag }}
+              {{ form.username }}
+            </div>
+            <div>
+              {{ form.password.label_tag }}
+              {{ form.password }}
+            </div>
+            <div>
+              {{ form.email.label_tag }}
+              {{ form.email }}
+            </div>
+            <button type="submit">Submit</button>
+          </form>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('.role-checkbox').change(function () {
+            if ($(this).is(':checked')) {
+                // Uncheck other checkboxes
+                $('.role-checkbox').not(this).prop('checked', false);
+            }
+        });
+    });
+</script>
+{% endblock content %}

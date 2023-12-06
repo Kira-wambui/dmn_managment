@@ -1,0 +1,39 @@
+{% extends 'base_dash.html' %}
+
+{% load static %}
+
+{% block content %}
+<div class="col-lg-10 mx-5">
+    <div class="jumbotron">
+        <h3 class="display-6">Manage Users</h3>
+        <hr class="my-4">
+        <table class="table table-borderless">
+            <thead class="border-bottom font-weight-bold">
+                <tr>
+                    <td>Username</td>
+                    <td>Email</td>
+                    <td>Action</td>
+                    <td>
+                        <a href="{% url 'add_user' %}" class="btn btn-outline-success">
+                            <i class="fas fa-plus"></i> Add New User
+                        </a>
+                    </td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                    <tr>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>
+                            <a href="" class="btn text-secondary px-0">
+                                <i class="far fa-edit fa-lg"></i> 
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock content %}

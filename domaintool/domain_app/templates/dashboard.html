@@ -116,7 +116,7 @@ to get the desired effect
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="./index.html" class="nav-link">
+                <a href="{% url 'users' %}" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Manage Users</p>
                 </a>
@@ -225,16 +225,44 @@ to get the desired effect
           <!-- /.col -->
       </div>
         <div class="row">
-          <div class="col-12">
-            <!-- /.card -->
-            <div style="width: 80%; margin: auto;">
-              <canvas id="expiryChart"></canvas>
-          </div>
+          <style>
+            .updated-column {
+                white-space: nowrap;
+            }
+            .date{
+                white-space: nowrap;
+            }
+        </style>
+        <div class="col-lg-12 mx-1">
+            <div class="jumbotron">
+                
+                <table class="display" id="domainTable">
+                    <thead class="border-bottom font-weight-bold">
+                        <tr>
+                            <td> Domain Name </td>
+                            <td> Date of Registration</td>
+                            <td> Date of Expiry</td>
+                            <td> Company</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for domain in domains %}
+                        <tr>
+                            <td> {{ domain.name }} </td>
+                            <td class="date"> {{ domain.registration_date }} </td>
+                            <td class="date"> {{ domain.expiry_date }} </td>
+                            <td> {{ domain.company }} </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
           
           
             <!-- /.card -->
         </div>
-          
+    
           <!-- /.col-md-6 -->
           <div class="col-lg-6">
             
@@ -280,6 +308,75 @@ to get the desired effect
 <script src="{%static 'plugins/chart.js/Chart.min.js' %}"></script>
 <script src="{%static 'dist/js/demo.js' %}"></script>
 <script src="{%static 'dist/js/pages/dashboard3.js' %}"></script>
+<!-- domain status script-->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script>
+    $(document).ready(function () {
+        var table = $('#domainTable').DataTable({
+        lengthChange: false,
+        searching: false,
+        initComplete: function () {
+            // Delay the execution by 100 milliseconds
+            setTimeout(function () {
+                fetchAndUpdateUpdatedColumn(table);
+            }, 100);
+            this.api().columns().every(function (index) {
+               
+            });
+        }
+    });
+    
+        async function fetchAndUpdateUpdatedColumn(table) {
+            // Check if the DataTable is initialized
+            if (!table) {
+                console.error('DataTable is not initialized. Aborting fetchAndUpdateUpdatedColumn.');
+                return;
+            }
+        
+            // Check if DataTable has rows
+            if (!table.rows) {
+                console.error('DataTable does not have rows. Aborting fetchAndUpdateUpdatedColumn.');
+                return;
+            }
+        
+            // Iterate through each row and fetch data
+            table.rows().every(async function (index) {
+                const row = this.node();
+                const domainName = $(row).find('td:eq(0)').text().trim();
+        
+                try {
+                    // Display a loading indicator while fetching data
+                    const updatedCell = $(row).find('.updated-column');
+                    updatedCell.html('<i class="fas fa-spinner fa-spin"></i>');
+        
+                    // Make a fetch request to the Django backend API endpoint
+                    const response = await fetch(`/api/domain-update/${domainName}/`);
+                    const data = await response.json();
+        
+                    // Log the entire API response to the console
+                    console.log('API Response:', data);
+        
+                    // Process the response...
+                    const updatedValue = data.updated_date || 'N/A';
+        
+                    // Update the "Updated" column cell
+                    updatedCell.text(updatedValue);
+                } catch (error) {
+                    // Handle errors from the fetch request
+                    console.error('Error fetching data for domain:', domainName, error);
+        
+                    // Display an error message in the "Updated" column
+                    const updatedCell = $(row).find('.updated-column');
+                    updatedCell.text('Error');
+                }
+            });
+        
+            // Redraw the DataTable
+            table.draw();
+        }
+    });
+</script>
 {% block js%}
 
 {% endblock %}
