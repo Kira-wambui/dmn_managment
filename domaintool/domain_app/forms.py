@@ -1,20 +1,27 @@
 from django import forms
+from django.contrib.auth.forms import UserCreationForm
 from .models import Company, Domain
 from .models import User
+from django.contrib.auth import get_user_model
+from django.utils.translation import gettext_lazy as _
 
-class UserForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput)
-    role_choices = [('admin', 'Admin'), ('user', 'User')]
-    is_admin = forms.MultipleChoiceField(
-        choices=role_choices,
-        widget=forms.CheckboxSelectMultiple(attrs={'class': 'role-checkbox'}),
-        required=True
-    )
+User = get_user_model()
+class UserForm(UserCreationForm):
+    is_admin = forms.BooleanField(required=False)
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password', 'is_admin', 'is_user']
+        fields = ['email', 'username', 'password1', 'password2', 'is_admin', 'is_user']
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        #remove password2 option
+        self.fields.pop('password2')
+
+        # Set the help_text for password1 to an empty string to hide default messages
+        self.fields['password1'].help_text = ""
+        
 class CompanyForm(forms.ModelForm):
     
     class Meta:

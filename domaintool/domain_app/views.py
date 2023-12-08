@@ -7,9 +7,11 @@ from .forms import CompanyForm, DomainForm, UserForm
 from .models import Company, Domain
 from django.views import View
 import requests, json
+import logging
 from datetime import datetime, date, timedelta
 from .models import User
 
+logger = logging.getLogger(__name__)
 # Create your views here.
 
 def index(request):
@@ -73,13 +75,17 @@ def add_user(request):
     if request.method == 'POST':
         form = UserForm(request.POST)
         if form.is_valid():
-            form.save()
-            # Redirect to a success page or any other desired behavior
-            return redirect('success_page')
+            user = form.save(commit=False)
+            user.is_admin = form.cleaned_data['is_admin']
+            user.save()
+
+            # Redirect to the user management section for administrators
+            return redirect('users')  # Change 'user_management' to the URL for managing users
     else:
         form = UserForm()
 
     return render(request, 'add_user.html', {'form': form})
+
 
 def company_list(request, id=0):
     if request.method == "GET":

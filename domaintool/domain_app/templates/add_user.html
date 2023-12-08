@@ -5,22 +5,56 @@
     <div class="jumbotron">
         <h3 class="display-6">Add New User</h3>
         <hr class="my-4">
-        <form method="post">
+
+        {% if form.errors %}
+            <div class="alert alert-danger" role="alert">
+                Please correct the following errors:
+                <ul>
+                    {% for field, errors in form.errors.items %}
+                        <li>{{ field }}: {{ errors.0 }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        <form method="post" action="{% url 'add_user' %}" autocomplete="off">
             {% csrf_token %}
-            <div>
-              {{ form.username.label_tag }}
-              {{ form.username }}
+            {% load crispy_forms_tags %}
+
+            <div class="row">
+                <div class="col-md-8">
+                    {{ form.username|as_crispy_field }}
+                </div>
+                <div class="col-md-4">
+                    {{ form.password1|as_crispy_field }}
+                </div>
+                <div class="col-md-8">
+                    {{ form.email|as_crispy_field }}
+                </div>
             </div>
-            <div>
-              {{ form.password.label_tag }}
-              {{ form.password }}
+
+            <!-- Render is_admin field with checkboxes -->
+            <div class="row">
+                <div class="col-md-2">
+                    {{ form.is_admin|as_crispy_field }}
+                </div>
+                <div class="col-md-2">
+                  {{ form.is_user|as_crispy_field }}
+              </div>
             </div>
-            <div>
-              {{ form.email.label_tag }}
-              {{ form.email }}
+
+            <div class="row">
+                <div class="col-md-8">
+                    <button type="submit" class="btn btn-success btn-block btn-lg"><i class="fa fa-database"
+                            aria-hidden="true"></i> Submit</button>
+                </div>
+                <div class="col-md-4">
+                    <a href="{% url 'domain' %}" class="btn btn-secondary btn-block btn-lg">
+                        <i class="fas fa-arrow-left"></i> Back to Users List
+                    </a>
+                </div>
             </div>
-            <button type="submit">Submit</button>
-          </form>
+        </form>
     </div>
 </div>
 
