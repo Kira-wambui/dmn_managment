@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'domain_app',
     'crispy_forms',
     'crispy_bootstrap5',
-    'corsheaders',
 ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
@@ -57,7 +56,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'domaintool.urls'
@@ -135,10 +133,10 @@ AUTH_USER_MODEL = 'domain_app.User'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CORS_ALLOWED_ORIGINS = [
-    "http://127.0.0.1:8000", 
-]
+# CORS_ALLOWED_ORIGINS = [
+#     "http://127.0.0.1:8000", 
+# ]
 
-CORS_ALLOW_ALL_ORIGINS = True
+# CORS_ALLOW_ALL_ORIGINS = True
 
 
