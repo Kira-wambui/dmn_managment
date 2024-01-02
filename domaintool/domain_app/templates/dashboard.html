@@ -1,4 +1,6 @@
+
 {%load static%}
+{% load custom_filters %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,6 +27,7 @@
   <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
   <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
 
 
 
@@ -105,25 +108,25 @@ to get the desired effect
                 <a href="#" class="d-block" style="font-weight: bold; font-size: 18px;">
                   <i class="nav-icon fas fa-home"></i>Home</a>
               </li>
-
+              {% if user.is_authenticated and user.is_admin %}  
             <li class="nav-item has-treeview menu-open">
-            <a href="#" class="nav-link active">
-              <i class="nav-icon fas fa-user"></i>
-              <p>
-                Users
-                <i class="right fas fa-angle-left"></i>
-              </p>
-            </a>
-            <ul class="nav nav-treeview">
-              <li class="nav-item">
-                <a href="{% url 'users' %}" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Manage Users</p>
-                </a>
-              </li>
-            </ul>
+              <a href="#" class="nav-link active">
+                <i class="nav-icon fas fa-user"></i>
+                <p>
+                  Users
+                  <i class="right fas fa-angle-left"></i>
+                </p>
+              </a>
+              <ul class="nav nav-treeview">
+                <li class="nav-item">
+                  <a href="{% url 'users' %}" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Manage Users</p>
+                  </a>
+                </li>
+              </ul>
           </li>
-          
+            {% endif %}
           <li class="nav-item has-treeview menu-open">
             <a href="#" class="nav-link active">
               <i class="nav-icon fas fa-building"></i>
@@ -165,8 +168,8 @@ to get the desired effect
               </li>
               <li class="nav-item">
                 <a href="./index3.html" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Report</p>
+                  {% comment %} <i class="far fa-circle nav-icon"></i>
+                  <p>Report</p> {% endcomment %}
                 </a>
               </li> 
             </ul>
@@ -235,28 +238,39 @@ to get the desired effect
         </style>
         <div class="col-lg-12 mx-1">
             <div class="jumbotron">
+                <h3> Domains </h3>
+                <canvas id="expiryDaysChart" width="800" height="400"></canvas>
+                <script>
+                  var ctx = document.getElementById('expiryDaysChart').getContext('2d');
+                  var expiryDates = [{% for domain in domains %}"{{ domain.expiry_date|days_remaining }}",{% endfor %}];
+                  var domainNames = [{% for domain in domains %}"{{ domain.name }}",{% endfor %}];
+          
+                  var expiryDaysChart = new Chart(ctx, {
+                      type: 'bar',
+                      data: {
+                          labels: domainNames,
+                          datasets: [{
+                              label: 'Days Remaining to Expiry',
+                              data: expiryDates,
+                              backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                              borderColor: 'rgba(75, 192, 192, 1)',
+                              borderWidth: 1
+                          }]
+                      },
+                      options: {
+                          scales: {
+                              y: {
+                                  beginAtZero: true
+                              }
+                          }
+                      }
+                  });
+              </script>
                 
-                <table class="display" id="domainTable">
-                    <thead class="border-bottom font-weight-bold">
-                        <tr>
-                            <td> Domain Name </td>
-                            <td> Date of Registration</td>
-                            <td> Date of Expiry</td>
-                            <td> Company</td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for domain in domains %}
-                        <tr>
-                            <td> {{ domain.name }} </td>
-                            <td class="date"> {{ domain.registration_date }} </td>
-                            <td class="date"> {{ domain.expiry_date }} </td>
-                            <td> {{ domain.company }} </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
             </div>
+            
+            
+            
         </div>
           
           
@@ -316,6 +330,7 @@ to get the desired effect
         var table = $('#domainTable').DataTable({
         lengthChange: false,
         searching: false,
+        pageLength: 10,
         initComplete: function () {
             // Delay the execution by 100 milliseconds
             setTimeout(function () {
