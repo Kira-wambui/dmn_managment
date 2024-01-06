@@ -120,8 +120,19 @@ def domain(request):
     return render(request, "manage_domain.html", context)
 
 def domain_status(request):
-    context = {'domains': Domain.objects.all()}
-    return render(request, "domain_status.html", context)
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        # If it's an AJAX request, fetch and return domain data
+        company_id = request.GET.get('company_id')
+        domains = Domain.objects.filter(company_id=company_id).values('name', 'expiry_date')
+
+        # Convert QuerySet to list for JsonResponse
+        domain_data = list(domains)
+
+        return JsonResponse(domain_data, safe=False)
+    else:
+        # Otherwise, render the initial page
+        context = {'domains': Domain.objects.all()}
+        return render(request, "domain_status.html", context)
 
 def dash_domain_status(request):
     context = {'domain': Domain.objects.all()}
