@@ -249,76 +249,119 @@ to get the desired effect
                 </select>
                 <canvas id="expiryDaysChart" width="800" height="400"></canvas>
                 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-<script>
-    $(document).ready(function() {
-        var ctx = document.getElementById('expiryDaysChart').getContext('2d');
-        
-        // Initial data (you can adjust this based on your needs)
-        var expiryDates = [{% for domain in domains %}"{{ domain.expiry_date|days_remaining }}",{% endfor %}];
-        var domainNames = [{% for domain in domains %}"{{ domain.name }}",{% endfor %}];
+                <script>
+                    $(document).ready(function() {
+                        var ctx = document.getElementById('expiryDaysChart').getContext('2d');
+                        
+                        // Initial data (you can adjust this based on your needs)
+                        var expiryDates = [{% for domain in domains %}"{{ domain.expiry_date|days_remaining }}",{% endfor %}];
+                        var domainNames = [{% for domain in domains %}"{{ domain.name }}",{% endfor %}];
+                
+                        var expiryDaysChart = new Chart(ctx, {
+                            type: 'bar',
+                            data: {
+                                labels: domainNames,
+                                datasets: [{
+                                    label: 'Days Remaining to Expiry',
+                                    data: expiryDates,
+                                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                    borderColor: 'rgba(75, 192, 192, 1)',
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                scales: {
+                                    y: {
+                                        beginAtZero: true
+                                    }
+                                }
+                            }
+                        });
+                
+                        // Add event listener for company dropdown change
+                        $('#companyDropdown').change(function() {
+                            var selectedCompanyId = $(this).val();
+                
+                            // Make AJAX request to get domain data for the selected company
+                            $.ajax({
+                                url: '/dashboard/',  // Update to your actual Django endpoint
+                                method: 'GET',
+                                data: { company_id: selectedCompanyId },
+                                success: function(response) {
+                                    console.log('Response from server:', response);
+                                    // Update chart with the new domain data
+                                    updateChart(response);
+                                },
+                                error: function(error) {
+                                    console.error('Error fetching domain data:', error);
+                                }
+                            });
+                        });
+                
+                        // Function to update the chart based on domain data
+                        function updateChart(domainData) {
+                          console.log('Received domain data:', domainData);
+                      
+                          var updatedDomainNames = domainData.map(function(domain) {
+                              return domain.name;
+                          });
+                      
+                          var updatedRemainingDays = domainData.map(function(domain) {
+                              return domain.remaining_days;
+                          });
+                      
+                          console.log('Updated domain names:', updatedDomainNames);
+                          console.log('Updated remaining days:', updatedRemainingDays);
+                      
+                          // Destroy the existing chart
+                          expiryDaysChart.destroy();
+                      
+                          // Recreate the chart with the updated data
+                          expiryDaysChart = new Chart(ctx, {
+                              type: 'bar',
+                              data: {
+                                  labels: updatedDomainNames,
+                                  datasets: [{
+                                      label: 'Days Remaining to Expiry',
+                                      data: updatedRemainingDays,
+                                      backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                      borderColor: 'rgba(75, 192, 192, 1)',
+                                      borderWidth: 1
+                                  }]
+                              },
+                              options: {
+                                  scales: {
+                                      y: {
+                                          beginAtZero: true
+                                      }
+                                  }
+                              }
+                          });
+                      }
+                      
+                      // Add event listener for company dropdown change
+                      $('#companyDropdown').change(function() {
+                          var selectedCompanyId = $(this).val();
+                      
+                          // Make AJAX request to get domain data for the selected company
+                          $.ajax({
+                              url: '/domain_status/',
+                              method: 'GET',
+                              data: { company_id: selectedCompanyId },
+                              success: function(response) {
+                                  console.log('Response from server:', response);
+                                  // Update chart with the new domain data
+                                  updateChart(response);
+                              },
+                              error: function(error) {
+                                  console.error('Error fetching domain data:', error);
+                              }
+                          });
+                      });
+                    });
+                </script>
+                
 
-        var expiryDaysChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: domainNames,
-                datasets: [{
-                    label: 'Days Remaining to Expiry',
-                    data: expiryDates,
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-
-        // Add event listener for company dropdown change
-        $('#companyDropdown').change(function() {
-            var selectedCompanyId = $(this).val();
-
-            // Make AJAX request to get domain data for the selected company
-            $.ajax({
-                url: '/domain_status/',  // Update to your actual Django endpoint
-                method: 'GET',
-                data: { company_id: selectedCompanyId },
-                success: function(response) {
-                    // Update chart with the new domain data
-                    updateChart(response);
-                },
-                error: function(error) {
-                    console.error('Error fetching domain data:', error);
-                }
-            });
-        });
-
-        // Function to update the chart based on domain data
-        function updateChart(domainData) {
-            console.log('Received domain data:', domainData);
-
-            // Assuming domainData is an array of objects with 'name' and 'expiry_date' properties
-            var updatedDomainNames = domainData.map(function(domain) {
-                return domain.name;
-            });
-
-            var updatedExpiryDates = domainData.map(function(domain) {
-                return domain.expiry_date;
-            });
-
-            // Update chart data and labels
-            expiryDaysChart.data.labels = updatedDomainNames;
-            expiryDaysChart.data.datasets[0].data = updatedExpiryDates;
-
-            // Update the chart
-            expiryDaysChart.update();
-        }
-    });
-</script>
                 
             </div>
             
