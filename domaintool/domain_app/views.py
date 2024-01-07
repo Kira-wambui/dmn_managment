@@ -22,32 +22,31 @@ def dashboard(request):
     active_domains = Domain.objects.filter(expiry_date__gte=date.today()).count()
     expired_domains = Domain.objects.filter(expiry_date__lt=date.today()).count()
 
-    context = {
-        'active_domains': active_domains,
-        'expired_domains': expired_domains,
-        'domains': Domain.objects.all(),
-    }
     if request.headers.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
         # This is an AJAX request
         company_id = request.GET.get('company_id')
         domains = Domain.objects.filter(company_id=company_id).values('name', 'expiry_date')
-        
+
         # Calculate remaining days for each domain
         domain_data = []
         for domain in domains:
-            expiry_date = timezone.make_aware(domain['expiry_date'])
-            remaining_days = expiry_date - timezone.now()
+            remaining_days = (domain['expiry_date'] - datetime.now(timezone.utc)).days
             domain_data.append({
                 'name': domain['name'],
-                'expiry_date': expiry_date.isoformat(),
-                'remaining_days': remaining_days.days,
+                'expiry_date': domain['expiry_date'].isoformat(),
+                'remaining_days': remaining_days,
             })
-        
-        return JsonResponse(domain_data, safe=False)
-    
-    context = {'domains': Domain.objects.all()}
-    return render(request, "dashboard.html", context)
 
+        # Return JsonResponse with a key
+        return JsonResponse({'domain_data': domain_data}, safe=False)
+    else:
+        context = {
+        'active_domains': active_domains,
+        'expired_domains': expired_domains,
+        'domains': Domain.objects.all(),
+    }
+        return render(request, "dashboard.html", context)
+    
 def signin(request):
     msg = ""
     if request.method == "POST":
