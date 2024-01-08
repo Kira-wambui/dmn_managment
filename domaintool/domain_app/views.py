@@ -22,29 +22,29 @@ def dashboard(request):
     active_domains = Domain.objects.filter(expiry_date__gte=date.today()).count()
     expired_domains = Domain.objects.filter(expiry_date__lt=date.today()).count()
 
-    if request.headers.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
-        # This is an AJAX request
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        # If it's an AJAX request, fetch and return domain data
         company_id = request.GET.get('company_id')
-        domains = Domain.objects.filter(company_id=company_id).values('name', 'expiry_date')
+        domains = Domain.objects.filter(company_id=company_id)
 
         # Calculate remaining days for each domain
         domain_data = []
         for domain in domains:
-            remaining_days = (domain['expiry_date'] - datetime.now(timezone.utc)).days
+            remaining_days = (domain.expiry_date - timezone.now()).days
             domain_data.append({
-                'name': domain['name'],
-                'expiry_date': domain['expiry_date'].isoformat(),
+                'name': domain.name,
+                'expiry_date': domain.expiry_date.isoformat(),
                 'remaining_days': remaining_days,
             })
 
-        # Return JsonResponse with a key
-        return JsonResponse({'domain_data': domain_data}, safe=False)
+        return JsonResponse(domain_data, safe=False)
     else:
+        # Otherwise, render the initial page
         context = {
         'active_domains': active_domains,
         'expired_domains': expired_domains,
         'domains': Domain.objects.all(),
-    }
+        }
         return render(request, "dashboard.html", context)
     
 def signin(request):
@@ -167,7 +167,7 @@ def lookup(request):
                 print(f"Domain Value: {domain_value}")
 
                 # Your API token for whoisjsonapi.com
-                api_token = 'FQcwBdbvYkjMHFZ6B4HEVnOovTnS07CUqRnR26NAJcxWCx6yTNrfUzN9YUzE_eC'
+                api_token = 'fDB7lCB7t7PgZ8rfml3YcZGwJNRHDtLqADAbKoqjK62BGMpCwUtt3i1Q17CbduI'
                 
                 # Construct the API URL
                 api_url = f'https://whoisjsonapi.com/v1/{domain_value}'
@@ -222,7 +222,7 @@ def lookup(request):
 class DomainUpdateView(View):
     def get(self, request, *args, **kwargs):
         domain_name = self.kwargs.get('domain_name')
-        api_token = 'FQcwBdbvYkjMHFZ6B4HEVnOovTnS07CUqRnR26NAJcxWCx6yTNrfUzN9YUzE_eC'  # Replace with your actual API token
+        api_token = 'fDB7lCB7t7PgZ8rfml3YcZGwJNRHDtLqADAbKoqjK62BGMpCwUtt3i1Q17CbduI'  # Replace with your actual API token
 
         # Print the URL before making the API request
         print(f'Requesting API for domain: {domain_name}')

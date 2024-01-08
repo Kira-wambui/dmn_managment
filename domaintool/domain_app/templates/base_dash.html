@@ -62,8 +62,11 @@ to get the desired effect
 
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
-      <!-- Messages Dropdown Menu -->
+      <!-- Notifications Dropdown Menu -->
+      {% block notification %}
 
+     {% endblock %}
+     
       <!-- Notifications Dropdown Menu -->
       <li class="nav-item dropdown">
         <a class="nav-link" data-toggle="dropdown" href="#"  style="color:white">
@@ -172,8 +175,8 @@ to get the desired effect
               </li>
               <li class="nav-item">
                 <a href="./index3.html" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Report</p>
+                  {% comment %} <i class="far fa-circle nav-icon"></i>
+                  <p>Report</p> {% endcomment %}
                 </a>
               </li> 
             </ul>
